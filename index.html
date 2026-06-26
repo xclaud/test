@@ -1,22 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>Claud Test</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link href="https://fonts.googleapis.com/css?family=Gotham:400,700" rel="stylesheet" type="text/css" />
 
-  <title>Claud Test</title>
-  
-  <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
+    </head>
 
-</head>
+    <body id="page-top">
+        <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="#page-top">Claud Test</a>
+                <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#walletbalance">Wallet Balance </a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#createorder">Creare Order</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#queryorder">Query Order</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#closeorder">Close Order</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#submerchant">Create SubMerchant</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead bg-primary text-white text-center">
+            <div class="container d-flex align-items-center flex-column">
+                <!-- Masthead Avatar Image-->
+                
+                <!-- Masthead Heading-->
+                <h1 class="masthead-heading text-uppercase mb-0">Claudia's Demo</h1>
+                <!-- Icon Divider-->
+                <!-- Masthead Subheading-->
+                <p class="masthead-subheading font-weight-light mb-0">Claudia's Binance Pay API</p>
+            </div>
+        </header>
+        <!-- Wallet Balance-->
+        <section class="page-section bg-third" id="walletbalance">
+            <div class="container">
+                <!-- Portfolio Section Heading-->
+                <h2 class="page-section-heading text-center text-uppercase text-black text-secondary mb-0"><span style="color:#000000">Wallet Balance</span></h2>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div id="thisdiv"></div>
+                    <div class="text-center mt-4">
+                    <a class="btn btn-xl btn-dark" href="http://192.168.64.2/test/balance.php">
+                        <i class="fas fa-download me-2"></i>
+                        View overview of your Wallet Balance
+                    </a>
+                </div>
+            </div>
+                <br><br>
+                    <div class="text-center mt-4">
+                <div class="popup" onclick="myFunction()"><a class="btn btn-xl btn-black2">Query Funding Wallet BUSD</a>
+                 <span class="popuptext" id="myPopup"><?php include 'getBalance.php'?></span>
+                    </div></p>
+                </div>
+                
+                <script>
+                // When the user clicks on div, open the popup
+                    function myFunction() {
+                    var popup = document.getElementById("myPopup");
+                    popup.classList.toggle("show");
+                    }
+                </script>
 
-<body>
+                <div class="text-center mt-4">
+                <div class="popup2" onclick="popup2()"><a class="btn btn-xl btn-black2">Query Funding Wallet USDT</a>
+                 <span class="popup2text" id="Popup"><?php include 'getBalance2.php'?></span>
+                    </div></p>
+                </div>
+                <script>
+                // When the user clicks on div, open the popup
+                    function popup2() {
+                    var popup = document.getElementById("Popup");
+                    popup.classList.toggle("show");
+                    }
+                </script>
+                </div>
+                </div>
+        </section>
 
-  <div id="root"></div>
+                <!-- Create Order -->
+        <section class="page-section bg-primary text-white mb-0" id="createorder">
+            <div class="container">
+                <h2 class="page-section-heading text-center text-uppercase text-white">Create Order</h2>
+                <!--  Divider-->
+                <div class="divider-custom divider-light">
+                </div>
 
-  <script src="scripts.js"></script>
-</body>
+                <div class="row">
+                    <div class="col-lg-4 ms-auto"><p class="lead">
+                        Payment Method:<br>
+                        <input type="radio" id="binancepay" name="binancepay" style="float:left" onclick="ShowHideDiv()"/> <input type ="image" src="binancepay.png" alt="Submit" style="float:left" width="320px" height="60" onclick="ShowHideDiv()">
+                    </p>
+                </div>
+                    <div class="col-lg-4 me-auto"><p class="lead">
+                    <div class="polaroid">
+                        <img src="boji.jpeg" alt="5 Terre" style="width:100%">
+                        <div class="container">
+                        <p style="color:#000000;">Boji - Ousama Ranking</p>
+                        <p style="color:#000000;"> Price: USD$0.10 </p>
+                        </div>
+                    </div>
+                </div>
+                </p></div>
+                </div>
+                <!-- -->
 
+                <div class="text-center mt-4">
+                <script type="text/javascript">
+                function ShowHideDiv() {
+                    var chkYes = document.getElementById("binancepay");
+                 busdamount.style.display = chkYes.checked ? "block" : "none";
+                 }
+                </script>
+                <div id="busdamount" style="display:none">
+                    Amount in BUSD: $0.10</div><br>
+
+                    <a class="btn btn-xl btn-outline-light" href="http://192.168.64.2/test/createOrder.php">
+                        <i class="fas fa-download me-2"></i>
+                        Pay with Binance Pay
+                    </a>
+                    <br><br>
+                   <!--<a class="btn btn-xl btn-white" href="http://192.168.64.2/test/createOrderQR.php">Scan QR to Pay</a>-->
+                   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
+                    <script type="text/javascript">
+                        $(function(){
+                            $('#button').click(function(){ 
+                             if(!$('#iframe').length) {
+                            $('#iframeHolder').html('<iframe id="iframe" src="http://192.168.64.2/test/createOrderQR.php" left="150%" width="350" height="300"></iframe>');
+                        }
+                        });   
+                    });
+                </script>
+                    <button id="button" class="btn btn-xl btn-white">Pay with QR Code</button>
+                   <div id="iframeHolder"></div>
+                 </span>
+                    </div></p>
+                </div>
+                </div>
+            </div>
+        </section>
+        <!-- Query Order -->
+        <section class="page-section bg-third" id="queryorder">
+            <div class="container">
+                <h2 class="page-section-heading text-center text-uppercase text-black text-secondary mb-0"><span style="color:#000000">Query Order Status</span></h2>
+                <div class="divider-custom">
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-xl-7">
+                    <?php include 'queryOrder.php'?>
+                           
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="page-section bg-dark" id="closeorder">
+            <div class="container">
+                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0 text-white">Close an Order</h2>
+                <div class="divider-custom">
+                </div>
+                <p>Close an order that have not been paid yet</p><br>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-xl-7">
+                    <?php include 'closeOrder.php'?>
+                           
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Create Sub Merchant ---> 
+        <section class="page-section bg-third" id="submerchant">
+            <div class="container">
+                <h2 class="page-section-heading text-center text-uppercase mb-0 text-black text-secondary">Create SubMerchant</h2>
+                <div class="divider-custom">
+                </div>
+                <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-7 text-black">
+                    <?php include 'submerchant.php'?>
+                           
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <div class="container">
+                <div class="row">
+                    <!-- Footer Location-->
+                    <div class="col-lg-4 mb-5 mb-lg-0">
+                    <h1 class="masthead-heading text-uppercase text-center">End of Page</h1>
+        </div>
+</div>
+</div>
+        </footer>
+
+        <script src="scripts.js"></script>
+       
+    </body>
 </html>
