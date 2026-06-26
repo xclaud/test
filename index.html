@@ -1,210 +1,152 @@
+<?php
+// Start the session to store cart data
+session_start();
+
+// Initialize the cart if it doesn't exist
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// Dummy product catalog
+$products = [
+    1 => ["name" => "Wireless Headphones", "price" => 99.99, "image" => "https://via.placeholder.com/150"],
+    2 => ["name" => "Mechanical Keyboard", "price" => 129.99, "image" => "https://via.placeholder.com/150"],
+    3 => ["name" => "Gaming Mouse", "price" => 59.99, "image" => "https://via.placeholder.com/150"]
+];
+
+// Handle AJAX Requests from JavaScript
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    header('Content-Type: application/json');
+    $productId = (int)$_POST['product_id'];
+
+    if ($_POST['action'] === 'add') {
+        if (isset($products[$productId])) {
+            if (isset($_SESSION['cart'][$productId])) {
+                $_SESSION['cart'][$productId]++;
+            } else {
+                $_SESSION['cart'][$productId] = 1;
+            }
+        }
+    } elseif ($_POST['action'] === 'remove') {
+        if (isset($_SESSION['cart'][$productId])) {
+            unset($_SESSION['cart'][$productId]);
+        }
+    }
+
+    // Return updated cart count and HTML for the cart sidebar
+    $cartHtml = renderCartHtml($products);
+    echo json_encode([
+        'success' => true,
+        'cartHtml' => $cartHtml,
+        'cartCount' => array_sum($_SESSION['cart'])
+    ]);
+    exit;
+}
+
+// Helper function to render cart contents
+function renderCartHtml($products) {
+    if (empty($_SESSION['cart'])) {
+        return '<p class="empty-msg">Your cart is empty.</p>';
+    }
+    
+    $html = '';
+    $total = 0;
+    foreach ($_SESSION['cart'] as $id => $qty) {
+        if (isset($products[$id])) {
+            $prod = $products[$id];
+            $subtotal = $prod['price'] * $qty;
+            $total += $subtotal;
+            $html .= "
+            <div class='cart-item'>
+                <div>
+                    <strong>{$prod['name']}</strong><br>
+                    <small>\${$prod['price']} x $qty</small>
+                </div>
+                <button class='remove-btn' onclick='removeFromCart($id)'>Remove</button>
+            </div>";
+        }
+    }
+    $html .= "<div class='cart-total'><strong>Total: \$" . number_format($total, 2) . "</strong></div>";
+    return $html;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <title>Claud Test</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple PHP/JS Shopping Cart</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f9; }
+        .container { display: flex; max-width: 1100px; margin: 0 auto; gap: 20px; }
+        .products { flex: 2; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .product-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .product-card img { max-width: 100%; height: auto; border-radius: 4px; }
+        .product-card h3 { margin: 10px 0 5px; font-size: 1.1rem; }
+        .price { color: #2ecc71; font-weight: bold; margin-bottom: 15px; }
+        button { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 0.9rem; }
+        button:hover { background: #2980b9; }
+        .cart-sidebar { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .remove-btn { background: #e74c3c; width: auto; padding: 5px 10px; }
+        .remove-btn:hover { background: #c0392b; }
+        .cart-total { margin-top: 15px; text-align: right; font-size: 1.1rem; }
+        .empty-msg { color: #7f8c8d; font-style: italic; }
+    </style>
+</head>
+<body>
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
-        <link href="https://fonts.googleapis.com/css?family=Gotham:400,700" rel="stylesheet" type="text/css" />
+<h1 style="text-align: center;">Gadget Store</h1>
 
-    </head>
-
-    <body id="page-top">
-        <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
-            <div class="container">
-                <a class="navbar-brand" href="#page-top">Claud Test</a>
-                <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#walletbalance">Wallet Balance </a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#createorder">Creare Order</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#queryorder">Query Order</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#closeorder">Close Order</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#submerchant">Create SubMerchant</a></li>
-                    </ul>
-                </div>
+<div class="container">
+    <div class="products">
+        <?php foreach ($products as $id => $product): ?>
+            <div class="product-card">
+                <img src="<?= $product['image'] ?>" alt="<?= $product['name'] ?>">
+                <h3><?= $product['name'] ?></h3>
+                <div class="price">$<?= number_format($product['price'], 2) ?></div>
+                <button onclick="addToCart(<?= $id ?>)">Add to Cart</button>
             </div>
-        </nav>
-        <!-- Masthead-->
-        <header class="masthead bg-primary text-white text-center">
-            <div class="container d-flex align-items-center flex-column">
-                <!-- Masthead Avatar Image-->
-                
-                <!-- Masthead Heading-->
-                <h1 class="masthead-heading text-uppercase mb-0">Claudia's Demo</h1>
-                <!-- Icon Divider-->
-                <!-- Masthead Subheading-->
-                <p class="masthead-subheading font-weight-light mb-0">Claudia's Binance Pay API</p>
-            </div>
-        </header>
-        <!-- Wallet Balance-->
-        <section class="page-section bg-third" id="walletbalance">
-            <div class="container">
-                <!-- Portfolio Section Heading-->
-                <h2 class="page-section-heading text-center text-uppercase text-black text-secondary mb-0"><span style="color:#000000">Wallet Balance</span></h2>
-                <!-- Icon Divider-->
-                <div class="divider-custom">
-                    <div id="thisdiv"></div>
-                    <div class="text-center mt-4">
-                    <a class="btn btn-xl btn-dark" href="http://192.168.64.2/test/balance.php">
-                        <i class="fas fa-download me-2"></i>
-                        View overview of your Wallet Balance
-                    </a>
-                </div>
-            </div>
-                <br><br>
-                    <div class="text-center mt-4">
-                <div class="popup" onclick="myFunction()"><a class="btn btn-xl btn-black2">Query Funding Wallet BUSD</a>
-                 <span class="popuptext" id="myPopup"><?php include 'getBalance.php'?></span>
-                    </div></p>
-                </div>
-                
-                <script>
-                // When the user clicks on div, open the popup
-                    function myFunction() {
-                    var popup = document.getElementById("myPopup");
-                    popup.classList.toggle("show");
-                    }
-                </script>
+        <?php endforeach; ?>
+    </div>
 
-                <div class="text-center mt-4">
-                <div class="popup2" onclick="popup2()"><a class="btn btn-xl btn-black2">Query Funding Wallet USDT</a>
-                 <span class="popup2text" id="Popup"><?php include 'getBalance2.php'?></span>
-                    </div></p>
-                </div>
-                <script>
-                // When the user clicks on div, open the popup
-                    function popup2() {
-                    var popup = document.getElementById("Popup");
-                    popup.classList.toggle("show");
-                    }
-                </script>
-                </div>
-                </div>
-        </section>
-
-                <!-- Create Order -->
-        <section class="page-section bg-primary text-white mb-0" id="createorder">
-            <div class="container">
-                <h2 class="page-section-heading text-center text-uppercase text-white">Create Order</h2>
-                <!--  Divider-->
-                <div class="divider-custom divider-light">
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-4 ms-auto"><p class="lead">
-                        Payment Method:<br>
-                        <input type="radio" id="binancepay" name="binancepay" style="float:left" onclick="ShowHideDiv()"/> <input type ="image" src="binancepay.png" alt="Submit" style="float:left" width="320px" height="60" onclick="ShowHideDiv()">
-                    </p>
-                </div>
-                    <div class="col-lg-4 me-auto"><p class="lead">
-                    <div class="polaroid">
-                        <img src="boji.jpeg" alt="5 Terre" style="width:100%">
-                        <div class="container">
-                        <p style="color:#000000;">Boji - Ousama Ranking</p>
-                        <p style="color:#000000;"> Price: USD$0.10 </p>
-                        </div>
-                    </div>
-                </div>
-                </p></div>
-                </div>
-                <!-- -->
-
-                <div class="text-center mt-4">
-                <script type="text/javascript">
-                function ShowHideDiv() {
-                    var chkYes = document.getElementById("binancepay");
-                 busdamount.style.display = chkYes.checked ? "block" : "none";
-                 }
-                </script>
-                <div id="busdamount" style="display:none">
-                    Amount in BUSD: $0.10</div><br>
-
-                    <a class="btn btn-xl btn-outline-light" href="http://192.168.64.2/test/createOrder.php">
-                        <i class="fas fa-download me-2"></i>
-                        Pay with Binance Pay
-                    </a>
-                    <br><br>
-                   <!--<a class="btn btn-xl btn-white" href="http://192.168.64.2/test/createOrderQR.php">Scan QR to Pay</a>-->
-                   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
-                    <script type="text/javascript">
-                        $(function(){
-                            $('#button').click(function(){ 
-                             if(!$('#iframe').length) {
-                            $('#iframeHolder').html('<iframe id="iframe" src="http://192.168.64.2/test/createOrderQR.php" left="150%" width="350" height="300"></iframe>');
-                        }
-                        });   
-                    });
-                </script>
-                    <button id="button" class="btn btn-xl btn-white">Pay with QR Code</button>
-                   <div id="iframeHolder"></div>
-                 </span>
-                    </div></p>
-                </div>
-                </div>
-            </div>
-        </section>
-        <!-- Query Order -->
-        <section class="page-section bg-third" id="queryorder">
-            <div class="container">
-                <h2 class="page-section-heading text-center text-uppercase text-black text-secondary mb-0"><span style="color:#000000">Query Order Status</span></h2>
-                <div class="divider-custom">
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 col-xl-7">
-                    <?php include 'queryOrder.php'?>
-                           
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="page-section bg-dark" id="closeorder">
-            <div class="container">
-                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0 text-white">Close an Order</h2>
-                <div class="divider-custom">
-                </div>
-                <p>Close an order that have not been paid yet</p><br>
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 col-xl-7">
-                    <?php include 'closeOrder.php'?>
-                           
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Create Sub Merchant ---> 
-        <section class="page-section bg-third" id="submerchant">
-            <div class="container">
-                <h2 class="page-section-heading text-center text-uppercase mb-0 text-black text-secondary">Create SubMerchant</h2>
-                <div class="divider-custom">
-                </div>
-                <div class="row justify-content-center">
-                <div class="col-lg-8 col-xl-7 text-black">
-                    <?php include 'submerchant.php'?>
-                           
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- Footer-->
-        <footer class="footer text-center">
-            <div class="container">
-                <div class="row">
-                    <!-- Footer Location-->
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                    <h1 class="masthead-heading text-uppercase text-center">End of Page</h1>
+    <div class="cart-sidebar">
+        <h2>Your Cart</h2>
+        <div id="cart-contents">
+            <?= renderCartHtml($products) ?>
         </div>
+    </div>
 </div>
-</div>
-        </footer>
 
-        <script src="scripts.js"></script>
-       
-    </body>
+<script>
+// JavaScript function to send data to PHP via AJAX Fetch API
+function updateCart(action, productId) {
+    const formData = new FormData();
+    formData.append('action', action);
+    formData.append('product_id', productId);
+
+    fetch('index.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Dynamically update the cart HTML section without page reload
+            document.getElementById('cart-contents').innerHTML = data.cartHtml;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function addToCart(productId) {
+    updateCart('add', productId);
+}
+
+function removeFromCart(productId) {
+    updateCart('remove', productId);
+}
+</script>
+
+</body>
 </html>
